@@ -20,4 +20,17 @@ describe("POST /api/auth/register", () => {
       message: "User registered successfully",
     });
   });
+
+  it("should return 409 when registering with an existing email", async () => {
+    await request(app).post("/api/auth/register").send(validUser);
+
+    const response = await request(app)
+      .post("/api/auth/register")
+      .send(validUser);
+
+    expect(response.status).toBe(409);
+    expect(response.body).toEqual({
+      message: "Email already exists",
+    });
+  });
 });
