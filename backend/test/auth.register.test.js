@@ -22,12 +22,21 @@ describe("POST /api/auth/register", () => {
   });
 
   it("should return 409 when registering with an existing email", async () => {
-    await request(app).post("/api/auth/register").send(validUser);
+    const duplicateUser = {
+      name: "Jane Doe",
+      email: "jane@example.com",
+      password: "Password123",
+    };
+
+    const firstResponse = await request(app)
+      .post("/api/auth/register")
+      .send(duplicateUser);
 
     const response = await request(app)
       .post("/api/auth/register")
-      .send(validUser);
+      .send(duplicateUser);
 
+    expect(firstResponse.status).toBe(201);
     expect(response.status).toBe(409);
     expect(response.body).toEqual({
       message: "Email already exists",
